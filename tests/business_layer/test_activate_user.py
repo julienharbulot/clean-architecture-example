@@ -2,11 +2,11 @@ from datetime import datetime
 from unittest import TestCase
 
 from src.adapters.user_repository_mem import UserRepositoryMem
-from src.business_layer.activate_user.use_case import ActivateUserRequest
+from src.business_layer.activate_user.input_port import ActivateUserRequest
 from src.business_layer.activate_user.use_case_impl import (
-    ActivateUserStatus,
     ActivateUserUseCaseImpl,
 )
+from src.business_layer.activate_user.output_port import ActivateUserStatus
 from src.business_layer.models import UserRequiredInfo
 from src.utils import CaptureResponse
 

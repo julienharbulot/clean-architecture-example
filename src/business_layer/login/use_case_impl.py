@@ -1,19 +1,10 @@
 from dataclasses import dataclass
-from typing import Callable, Generic
+from typing import Generic
 
 from src.business_layer.errors import Error, ErrorCode
-from src.business_layer.login.use_case import LoginRequest, T
-from src.business_layer.models import AccessToken
+from src.business_layer.login.input_port import LoginRequest, T
+from src.business_layer.login.output_port import LoginResponse, LoginResponseListener
 from src.business_layer.ports import AuthenticationService, UserRepository
-
-
-@dataclass
-class LoginResponse:
-    access_token: AccessToken
-    request_id: str
-
-
-LoginResponseListener = Callable[[LoginResponse], T]
 
 
 @dataclass

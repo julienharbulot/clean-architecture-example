@@ -5,16 +5,19 @@ from fastapi import FastAPI, Header, Request
 from fastapi.responses import JSONResponse
 from pydantic.json import pydantic_encoder
 
-from src.business_layer.activate_user.use_case import (
+from src.business_layer.activate_user.input_port import (
     ActivateUserRequest,
     ActivateUserUseCase,
 )
-from src.business_layer.create_user.use_case import CreateUserRequest, CreateUserUseCase
+from src.business_layer.create_user.input_port import (
+    CreateUserRequest,
+    CreateUserUseCase,
+)
 from src.business_layer.errors import Error, ErrorCode
-from src.business_layer.get_user.use_case import GetUserRequest, GetUserUseCase
+from src.business_layer.get_user.input_port import GetUserRequest, GetUserUseCase
 
 # This is the HTTP response model
-from src.business_layer.login.use_case import LoginRequest, LoginUseCase
+from src.business_layer.login.input_port import LoginRequest, LoginUseCase
 from src.business_layer.models import AccessToken
 
 

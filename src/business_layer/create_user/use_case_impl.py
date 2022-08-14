@@ -1,31 +1,21 @@
 from dataclasses import dataclass
 from typing import Callable, List, Optional
 
-from src.business_layer.create_user.use_case import (
+from src.business_layer.create_user.input_port import (
     CreateUserRequest,
     CreateUserUseCase,
     T,
 )
+from src.business_layer.create_user.output_port import (
+    CreateUserResponse,
+    CreateUserResponseListener,
+)
 from src.business_layer.errors import Error, ErrorCode
-from src.business_layer.models import UserId, UserRequiredInfo
-
-# ==================================================
-# Types used in the use-case constructor:
+from src.business_layer.models import UserRequiredInfo
 from src.business_layer.ports import AuthenticationService, UserRepository
 
-CreateUserResponseListener = Callable[["CreateUserResponse"], T]
 CreateUserDataValidationPolicy = Callable[[UserRequiredInfo], List[ErrorCode]]
 ActivationRequestSender = Callable[[str, str], None]
-
-
-@dataclass
-class CreateUserResponse:
-    user_id: UserId
-    request_id: str
-
-
-# ==================================================
-# Use-case implementation
 
 
 @dataclass

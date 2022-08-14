@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
-from src.business_layer.activate_user.use_case import ActivateUserRequest
-from src.business_layer.create_user.use_case import CreateUserRequest
+from src.business_layer.activate_user.input_port import ActivateUserRequest
+from src.business_layer.create_user.input_port import CreateUserRequest
+from src.business_layer.login.input_port import LoginRequest
 from src.business_layer.models import UserRequiredInfo
 from pydantic.json import pydantic_encoder
 import json
@@ -8,28 +9,29 @@ import requests
 
 
 class Color:
-   PURPLE = '\033[95m'
-   CYAN = '\033[96m'
-   DARKCYAN = '\033[36m'
-   BLUE = '\033[94m'
-   GREEN = '\033[92m'
-   YELLOW = '\033[93m'
-   RED = '\033[91m'
-   BOLD = '\033[1m'
-   UNDERLINE = '\033[4m'
-   END = '\033[0m'
+    PURPLE = "\033[95m"
+    CYAN = "\033[96m"
+    DARKCYAN = "\033[36m"
+    BLUE = "\033[94m"
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    RED = "\033[91m"
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
+    END = "\033[0m"
+
 
 def post(endpoint, data):
     data = json.dumps(data, default=pydantic_encoder)
     print("-----------------------------------")
     print(f"{Color.BOLD}<-- POST {endpoint}{Color.END}\n", data)
     response = requests.post(
-        f'http://127.0.0.1:8000{endpoint}',
+        f"http://127.0.0.1:8000{endpoint}",
         headers={
-            'accept': 'application/json',
-            'Content-Type': 'application/json',
+            "accept": "application/json",
+            "Content-Type": "application/json",
         },
-        data=data
+        data=data,
     )
 
     try:
@@ -42,15 +44,20 @@ def post(endpoint, data):
 
 
 def get(endpoint, **kwargs):
+    access_token = kwargs.get("access_token", "")
+    if 'access_token' in kwargs:
+        del kwargs['access_token']
+
     query_str = "&".join(f"{arg[0]}={arg[1]}" for arg in kwargs.items())
     print("-----------------------------------")
-    print(f"{Color.BOLD}<-- GET {endpoint}{Color.END}\n", query_str)
+    print(f"{Color.BOLD}<-- GET {endpoint}{Color.END}\n", query_str, f"(access={access_token})")
 
     response = requests.get(
-        f'http://127.0.0.1:8000{endpoint}?{query_str}',
+        f"http://127.0.0.1:8000{endpoint}?{query_str}",
         headers={
-            'accept': 'application/json',
-            'Content-Type': 'application/json',
+            "accept": "application/json",
+            "Content-Type": "application/json",
+            "access-token": access_token,
         },
     )
     try:
@@ -62,37 +69,41 @@ def get(endpoint, **kwargs):
         return None
 
 
-if __name__=="__main__":
-    get(
-        "/user",
-        user_email="bad_email@gmail.com",
-        request_id="rid_42"
+if __name__ == "__main__":
+    r = post(
+        "/users/",
+        CreateUserRequest(
+            user_data=UserRequiredInfo("email", "name", datetime.now()),
+            password="pass",
+        ),
     )
 
     r = post(
         "/users/",
-        CreateUserRequest(user_data=UserRequiredInfo(
-            "email", "name", "pass", datetime.now()
-        ))
-    )
-
-    r = post(
-        "/users/",
-        CreateUserRequest(user_data=UserRequiredInfo(
-            "email@gmail.com", "name", "password9.", datetime.now() - timedelta(days = 365*20)
-        ))
+        CreateUserRequest(
+            user_data=UserRequiredInfo(
+                "email@gmail.com",
+                "name",
+                datetime.now() - timedelta(days=365 * 20),
+            ),
+            password="password9.",
+        ),
     )
     if type(r) is str:
         r = json.loads(r)
 
-    if 'user_id' in r:
-        post(
-            "/user/activate",
-            ActivateUserRequest(r['user_id'], datetime.now())
-        )
+    if "user_id" in r:
+        post("/user/activate", ActivateUserRequest(r["user_id"], datetime.now()))
 
-    get(
-        "/user",
+    print("This request is not authorized since access_token is missing")
+    get("/user", user_email="email@gmail.com", request_id="rid_42")
+
+    print("Getting an access token")
+    r = post("/login", LoginRequest(
         user_email="email@gmail.com",
-        request_id="rid_42"
-    )
+        user_password="password9.",
+    ))
+    access_token = r['access_token']
+
+    get("/user", user_email="email@gmail.com", request_id="rid_42", access_token=access_token)
+

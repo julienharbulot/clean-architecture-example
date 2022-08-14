@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from src.adapters.authentication_service_mem import AuthenticationServiceMem
 from src.adapters.user_repository_mem import UserRepositoryMem
-from src.business_layer.create_user.use_case import CreateUserRequest
+from src.business_layer.create_user.input_port import CreateUserRequest
 from src.business_layer.create_user.use_case_impl import CreateUserUseCaseImpl
 from src.business_layer.errors import Error, ErrorCode
 from src.business_layer.models import UserRequiredInfo
