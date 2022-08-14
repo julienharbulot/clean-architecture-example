@@ -5,9 +5,9 @@ from src.business_layer.errors import ErrorCode
 from src.business_layer.policies import (
     birthdate_validation_policy,
     email_validation_policy,
-    password_validation_policy,
     user_activation_timeout_policy,
 )
+from src.adapters.authentication_service_mem import password_validation_policy
 
 
 class TestPasswordValidationPolicy(TestCase):

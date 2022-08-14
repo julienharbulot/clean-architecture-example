@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Callable, TypeVar
 
+from src.business_layer.models import AccessToken
+
 T = TypeVar("T")
 
 
@@ -11,6 +13,7 @@ T = TypeVar("T")
 @dataclass
 class GetUserRequest:
     user_email: str
+    access_token: AccessToken
     request_id: str = ""
 
 

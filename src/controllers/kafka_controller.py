@@ -6,12 +6,12 @@ import pydantic
 from kafka import KafkaConsumer  # type: ignore
 
 from src.business_layer.activate_user.use_case import (
-    ActivateUserUseCase,
     ActivateUserRequest,
+    ActivateUserUseCase,
 )
-from src.business_layer.create_user.use_case import CreateUserUseCase, CreateUserRequest
+from src.business_layer.create_user.use_case import CreateUserRequest, CreateUserUseCase
 from src.business_layer.errors import Error, ErrorCode
-from src.business_layer.get_user.use_case import GetUserUseCase, GetUserRequest
+from src.business_layer.get_user.use_case import GetUserRequest, GetUserUseCase
 
 
 @dataclass

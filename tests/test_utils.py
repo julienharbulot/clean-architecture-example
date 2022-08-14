@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from src.utils import PasswordUtils
+from src.adapters.authentication_service_mem import PasswordUtils
 
 
 class TestPasswordUtils(TestCase):

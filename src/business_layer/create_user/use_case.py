@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Generic, List, TypeVar
+from typing import Generic, List, Optional, TypeVar
 
 from src.business_layer.errors import ErrorCode
 from src.business_layer.models import UserRequiredInfo
@@ -15,6 +15,7 @@ T = TypeVar("T")
 @dataclass
 class CreateUserRequest:
     user_data: UserRequiredInfo
+    password: str
     request_id: str = ""
 
 
@@ -24,5 +25,7 @@ class CreateUserUseCase(ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def validate_user_data(self, r: UserRequiredInfo) -> List[ErrorCode]:
+    def validate_user_data(
+        self, r: UserRequiredInfo, password: Optional[str]
+    ) -> List[ErrorCode]:
         pass

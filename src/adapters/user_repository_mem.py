@@ -4,7 +4,13 @@ from typing import Dict, Optional
 from uuid import uuid1
 
 from src.business_layer.errors import Error, ErrorCode
-from src.business_layer.models import ActivationData, User, UserRequiredInfo, UserId
+from src.business_layer.models import (
+    ActivationData,
+    SecurityId,
+    User,
+    UserId,
+    UserRequiredInfo,
+)
 from src.business_layer.ports import UserRepository
 
 
@@ -30,7 +36,10 @@ class UserRepositoryMem(UserRepository):  # in memory
         return None
 
     def create_user(
-        self, user_data: UserRequiredInfo, activated: bool = False
+        self,
+        user_data: UserRequiredInfo,
+        security_id: SecurityId,
+        activated: bool = False,
     ) -> UserId:
         print(f"Create user: {user_data}")
 
@@ -42,6 +51,7 @@ class UserRepositoryMem(UserRepository):  # in memory
             User(
                 user_id,
                 user_data,
+                security_id,
                 activated,
                 account_created_at=datetime.now(),
             )

@@ -15,7 +15,8 @@ class TestActivateUser(TestCase):
     def test_happy_path(self):
         repo = UserRepositoryMem()
         user_id = repo.create_user(
-            UserRequiredInfo("email", "name", "password", datetime.now()),
+            UserRequiredInfo("email", "name", datetime.now()),
+            "security_id",
             activated=False,
         )
 
@@ -41,7 +42,8 @@ class TestActivateUser(TestCase):
     def test_user_already_activated(self):
         repo = UserRepositoryMem()
         user_id = repo.create_user(
-            UserRequiredInfo("email", "name", "password", datetime.now()),
+            UserRequiredInfo("email", "name", datetime.now()),
+            "security_id",
             activated=True,
         )
 
@@ -56,7 +58,8 @@ class TestActivateUser(TestCase):
     def test_user_timeout(self):
         repo = UserRepositoryMem()
         user_id = repo.create_user(
-            UserRequiredInfo("email", "name", "password", datetime.now()),
+            UserRequiredInfo("email", "name", datetime.now()),
+            "security_id",
             activated=False,
         )
 

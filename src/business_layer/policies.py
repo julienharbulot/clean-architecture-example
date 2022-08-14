@@ -8,20 +8,8 @@ from src.business_layer.models import UserRequiredInfo
 
 def create_user_data_validation_policy(user_data: UserRequiredInfo):
     error_codes = []
-    error_codes.extend(password_validation_policy(user_data.password))
     error_codes.extend(birthdate_validation_policy(user_data.birthdate))
     error_codes.extend(email_validation_policy(user_data.email))
-    return error_codes
-
-
-def password_validation_policy(password: str) -> List[ErrorCode]:
-    error_codes = []
-    if len(password) < 8:
-        error_codes.append(ErrorCode.password_is_less_than_8_chars)
-    if not re.search(r"[a-zA-Z]", password):
-        error_codes.append(ErrorCode.password_does_not_contain_char)
-    if not re.search(r"[0-9]", password):
-        error_codes.append(ErrorCode.password_does_not_contain_number)
     return error_codes
 
 

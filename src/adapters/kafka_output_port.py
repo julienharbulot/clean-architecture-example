@@ -1,9 +1,9 @@
 import json
 from dataclasses import dataclass
-from typing import List, Any
+from typing import Any, List
 
-from pydantic.json import pydantic_encoder
 from kafka import KafkaProducer  # type: ignore
+from pydantic.json import pydantic_encoder
 
 
 @dataclass

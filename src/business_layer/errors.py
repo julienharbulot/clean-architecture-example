@@ -22,6 +22,12 @@ class ErrorCode(Enum):
     # user repository
     user_exists = auto()
     user_not_found = auto()
+    user_not_activated = auto()
+
+    # authentication
+    wrong_password = auto()
+    unknown_access_token = auto()
+    illegal_access = auto()
 
     def __bool__(self):
         return self != ErrorCode.ok

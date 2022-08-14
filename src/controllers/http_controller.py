@@ -1,7 +1,7 @@
 import json
-from typing import Any
+from typing import Any, Optional
 
-from fastapi import Depends, FastAPI, Request
+from fastapi import FastAPI, Header, Request
 from fastapi.responses import JSONResponse
 from pydantic.json import pydantic_encoder
 
@@ -13,8 +13,11 @@ from src.business_layer.create_user.use_case import CreateUserRequest, CreateUse
 from src.business_layer.errors import Error, ErrorCode
 from src.business_layer.get_user.use_case import GetUserRequest, GetUserUseCase
 
-
 # This is the HTTP response model
+from src.business_layer.login.use_case import LoginRequest, LoginUseCase
+from src.business_layer.models import AccessToken
+
+
 class JSONResponsePydantic(JSONResponse):
     def render(self, content: Any) -> bytes:
         return json.dumps(
@@ -37,6 +40,7 @@ def make_http_controller(
     user_creator: CreateUserUseCase[JSONResponsePydantic],
     activate_user: ActivateUserUseCase[JSONResponsePydantic],
     get_user: GetUserUseCase[JSONResponsePydantic],
+    login: LoginUseCase[JSONResponsePydantic],
 ) -> FastAPI:
     app = FastAPI()
 
@@ -44,10 +48,14 @@ def make_http_controller(
     async def error_handler(_: Request, e: Error):
         status_code = 400
         if e.error_codes:
-            if e.error_codes[0] == ErrorCode.system_error:
-                status_code = 500
+            if e.error_codes[0] == ErrorCode.unknown_access_token:
+                status_code = 401
+            if e.error_codes[0] == ErrorCode.illegal_access:
+                status_code = 403
             if e.error_codes[0] == ErrorCode.user_not_found:
                 status_code = 404
+            if e.error_codes[0] == ErrorCode.system_error:
+                status_code = 500
 
         return JSONResponse(
             status_code=status_code,
@@ -74,8 +82,22 @@ def make_http_controller(
         return response
 
     @app.get("/user")
-    def _get_user_by_email(request: GetUserRequest = Depends()):
+    def _get_user_by_email(
+        user_email: str,
+        request_id: Optional[str] = None,
+        access_token: AccessToken = Header(),
+    ):
+        request = GetUserRequest(
+            user_email=user_email,
+            access_token=access_token,
+            request_id=request_id or "",
+        )
         response = get_user(request)
+        return response
+
+    @app.post("/login")
+    def _login(request: LoginRequest):
+        response = login(request)
         return response
 
     return app

@@ -7,7 +7,7 @@ from src.business_layer.models import User
 
 # ==================================================
 # Types used in the use-case constructor:
-from src.business_layer.ports import UserRepository
+from src.business_layer.ports import AuthorizationService, UserRepository
 
 
 @dataclass
@@ -27,8 +27,11 @@ GetUserResponseListener = Callable[[GetUserResponse], T]
 class GetUserUseCaseImpl(Generic[T]):
     output_port: GetUserResponseListener
     repository: UserRepository
+    authorization: AuthorizationService
 
     def __call__(self, request: GetUserRequest) -> T:
+        self.authorization.ensure_authorized(request.access_token, "get-user")
+
         user = self.repository.get_by_email(request.user_email)
         if user:
             return self.output_port(
