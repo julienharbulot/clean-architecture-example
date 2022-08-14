@@ -11,7 +11,7 @@ pip install -r pip-requirements.txt
 Running the http server:
 
 ```commandline
-python -m src
+python -m src.http_app
 ```
 
 Running the example script:

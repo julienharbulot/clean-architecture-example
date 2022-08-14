@@ -4,13 +4,14 @@ from typing import Dict, Optional
 from uuid import uuid1
 
 from src.business_layer.errors import Error, ErrorCode
-from src.business_layer.models import ActivationData, User, UserRequiredInfo
+from src.business_layer.models import ActivationData, User, UserRequiredInfo, UserId
+from src.business_layer.ports import UserRepository
 
 
-class UserRepositoryMem:  # in memory
+class UserRepositoryMem(UserRepository):  # in memory
     def __init__(self):
-        self.data: Dict[str, User] = {}
-        self.email_to_id: Dict[str, str] = {}
+        self.data: Dict[UserId, User] = {}
+        self.email_to_id: Dict[str, UserId] = {}
 
     def _create_entry(self, user: User):
         self.data[user.id] = deepcopy(user)
@@ -19,7 +20,7 @@ class UserRepositoryMem:  # in memory
     def _update(self, user: User):
         self.data[user.id] = deepcopy(user)
 
-    def get_by_id(self, user_id: str) -> Optional[User]:
+    def get_by_id(self, user_id: UserId) -> Optional[User]:
         return deepcopy(self.data.get(user_id))
 
     def get_by_email(self, email: str) -> Optional[User]:
@@ -28,13 +29,15 @@ class UserRepositoryMem:  # in memory
             return self.get_by_id(user_id)
         return None
 
-    def create_user(self, user_data: UserRequiredInfo, activated: bool = False) -> str:
+    def create_user(
+        self, user_data: UserRequiredInfo, activated: bool = False
+    ) -> UserId:
         print(f"Create user: {user_data}")
 
         if self.get_by_email(user_data.email):
             raise Error(ErrorCode.user_exists)
 
-        user_id = str(uuid1())
+        user_id = UserId(str(uuid1()))
         self._create_entry(
             User(
                 user_id,
@@ -46,13 +49,13 @@ class UserRepositoryMem:  # in memory
 
         return user_id
 
-    def get_activation_data(self, user_id: str) -> Optional[ActivationData]:
+    def get_activation_data(self, user_id: UserId) -> Optional[ActivationData]:
         user = self.get_by_id(user_id)
         if user:
             return ActivationData(user.account_activated, user.account_created_at)
         return None
 
-    def activate(self, user_id: str) -> None:
+    def activate(self, user_id: UserId) -> None:
         user = self.get_by_id(user_id)
         if not user:
             raise Error(ErrorCode.user_not_found)

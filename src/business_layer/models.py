@@ -1,5 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing_extensions import NewType
+
+
+UserId = NewType("UserId", str)
 
 
 @dataclass(eq=True)
@@ -18,7 +22,7 @@ class ActivationData:
 
 @dataclass(eq=True)
 class User:
-    id: str
+    id: UserId
     info: UserRequiredInfo
     account_activated: bool
     account_created_at: datetime

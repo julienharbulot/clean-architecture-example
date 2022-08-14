@@ -1,14 +1,13 @@
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum, auto
-from typing import Callable, Generic, Optional, Protocol
+from typing import Callable, Generic, Optional
 
 from src.business_layer.activate_user.use_case import ActivateUserRequest, T
-from src.business_layer.models import ActivationData
 
 # ==================================================
 # Types used in the use-case constructor:
-
+from src.business_layer.ports import UserRepository
 
 UserActivationTimeoutPolicy = Callable[[datetime, datetime], bool]
 ActivateUserResponseListener = Callable[["ActivateUserResponse"], T]
@@ -25,14 +24,6 @@ class ActivateUserStatus(Enum):
 class ActivateUserResponse:
     status: ActivateUserStatus
     request_id: Optional[str]
-
-
-class UserRepository(Protocol):
-    def get_activation_data(self, user_id: str) -> Optional[ActivationData]:
-        raise NotImplementedError
-
-    def activate(self, user_id: str) -> None:
-        raise NotImplementedError
 
 
 # ==================================================

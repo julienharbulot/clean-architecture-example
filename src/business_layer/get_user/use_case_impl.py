@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Callable, Generic, Optional, Protocol
+from typing import Callable, Generic
 
 from src.business_layer.errors import Error, ErrorCode
 from src.business_layer.get_user.use_case import GetUserRequest, T
@@ -7,6 +7,7 @@ from src.business_layer.models import User
 
 # ==================================================
 # Types used in the use-case constructor:
+from src.business_layer.ports import UserRepository
 
 
 @dataclass
@@ -16,11 +17,6 @@ class GetUserResponse:
 
 
 GetUserResponseListener = Callable[[GetUserResponse], T]
-
-
-class UserRepository(Protocol):
-    def get_by_email(self, email: str) -> Optional[User]:
-        raise NotImplementedError
 
 
 # ==================================================

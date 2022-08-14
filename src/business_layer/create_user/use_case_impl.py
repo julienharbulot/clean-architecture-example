@@ -1,6 +1,6 @@
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Callable, List, Protocol
+from typing import Callable, List
 
 from src.business_layer.create_user.use_case import (
     CreateUserRequest,
@@ -8,11 +8,11 @@ from src.business_layer.create_user.use_case import (
     T,
 )
 from src.business_layer.errors import Error, ErrorCode
-from src.business_layer.models import UserRequiredInfo
+from src.business_layer.models import UserRequiredInfo, UserId
 
 # ==================================================
 # Types used in the use-case constructor:
-
+from src.business_layer.ports import UserRepository
 
 CreateUserResponseListener = Callable[["CreateUserResponse"], T]
 CreateUserDataValidationPolicy = Callable[[UserRequiredInfo], List[ErrorCode]]
@@ -22,13 +22,8 @@ ActivationRequestSender = Callable[[str, str], None]
 
 @dataclass
 class CreateUserResponse:
-    user_id: str
+    user_id: UserId
     request_id: str
-
-
-class UserRepository(Protocol):
-    def create_user(self, user_data: UserRequiredInfo, activated: bool) -> str:
-        raise NotImplementedError
 
 
 # ==================================================

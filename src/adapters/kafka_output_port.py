@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import List, Any
 
 from pydantic.json import pydantic_encoder
-from kafka import KafkaProducer
+from kafka import KafkaProducer  # type: ignore
 
 
 @dataclass

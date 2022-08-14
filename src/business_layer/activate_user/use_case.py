@@ -4,11 +4,12 @@ from typing import Callable, TypeVar
 
 # ======================================================================
 # Types used in the use-case interface and use-case interface definition
+from src.business_layer.models import UserId
 
 
 @dataclass
 class ActivateUserRequest:
-    user_id: str
+    user_id: UserId
     activated_at: datetime
     request_id: str = ""
 
